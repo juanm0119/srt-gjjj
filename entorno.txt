@@ -1,0 +1,17 @@
+Verificación del entorno · 2026-10-17 12:13 · Darwin 27.0.0 (arm64)
+
+Para      Elemento                                     Detalle
+----------------------------------------------------------------------------------------------------
+FDS 1  ✅  Python 3.11–3.12 (lo instala uv)             3.12.15
+FDS 1  ✅  uv                                           uv 0.13.1 (62faed335 2026-10-13 aarch64-apple-darwin)
+FDS 1  ✅  Git                                          git version 2.54.0 (Apple Git-157)
+FDS 1  ✅  Git: nombre y correo configurados            Juan Manuel <juanm.adarvec2@uqvirtual.edu.co>
+FDS 1  ✅  Acceso a GitHub (plantilla del curso)        OK
+FDS 1  ✅  Librerías del curso (uv sync)                todas importan
+FDS 1  ✅  Disco libre ≥ 15 GB                          81 GB libres
+FDS 1  ✅  RAM ≥ 8 GB (16 GB recomendado)               8 GB
+FDS 3  ✅  Docker instalado                             Docker version 29.1.3, build f52814d
+FDS 3  ✅  Docker corriendo con ≥ 4 GB de RAM           3.8 GB asignados
+FDS 4  ✅  Ollama con qwen3:4b                          modelo descargado
+----------------------------------------------------------------------------------------------------
+✅ LISTO para el FDS 1.
