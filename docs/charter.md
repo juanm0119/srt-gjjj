@@ -5,9 +5,9 @@
 
 ## 1. Identificación
 - Proyecto: SRT – Conecta Andina S.A.
-- Variante (V1–V6) y segmento:
-- Supuestos de la variante: `customer_value` · `contact_cost` · `retention_success_rate` · capacidad semanal (`business.weekly_capacity`) · política de equidad (`fairness.max_recall_gap_senior_citizen`) · semilla del extracto
-- Equipo y roles principal / secundario (Líder/PO · Data Scientist/Steward · MLOps Engineer):
+- Variante (V2) y segmento: Hogar Pereira y Dosquebradas §11.
+- Supuestos de la variante: `customer_value`:450 · `contact_cost`:20 · `retention_success_rate`:0.25 · capacidad semanal (`business.weekly_capacity`):900 · política de equidad (`fairness.max_recall_gap_senior_citizen`): >= 0.1  · semilla del extracto: 2027 §11 contrato.
+- Equipo y roles principal / secundario (Líder/PO · Data Scientist/Steward · MLOps Engineer): 
 - Repositorio:
 
 ## 2. Problema de negocio y línea base
