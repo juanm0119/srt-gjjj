@@ -129,32 +129,140 @@ El análisis económico de los 738 clientes sirve como argumento para discutir e
 El umbral definitivo será aprobado por el sponsor en el Reto 06 con evidencia de rentabilidad, capacidad y equidad. La brecha de recall actual de 0.1444 supera el límite inicial de V2 de 0.10 y queda registrada para ese análisis.
 
 
-
 ## 3. ML Canvas (razonamiento de cada bloque)
-| Bloque | Canvas canónico del SRT | Razonamiento del equipo | Adaptación a la variante |
-|---|---|---|---|
-| Propuesta de valor | | | |
-| Tarea de predicción | | | |
-| Decisiones | | | |
-| Haciendo predicciones | | | |
-| Recolección de datos | | | |
-| Fuentes de datos | | | |
-| Simulación de impacto | | | |
-| Construyendo modelos | | | |
-| Features | | | |
-| Monitoreo | | | |
 
-**Bloque peor justificado y por qué** ("todos están bien justificados" no cuenta):
+La tabla describe el diseño objetivo del SRT. Los retos posteriores construirán y verificarán sus componentes. Las referencias de las justificaciones corresponden al Contrato del sistema del curso.
+
+| Bloque | Canónico: resumen | Por qué está así | Qué se rompería si fuera distinto | Adaptación a la variante V2 |
+|---|---|---|---|---|
+| Propuesta de valor | Entregar al call center una lista priorizada y explicada para orientar las llamadas de retención. | §1: la decisión de negocio es a quién llamar cada semana y con qué argumento. La capacidad limitada obliga a priorizar los contactos. | Un reporte de probabilidades sin una lista utilizable dejaría a los agentes resolviendo la selección con las reglas informales actuales. | La priorización corresponde a Hogar Pereira y Dosquebradas, con capacidad máxima de 900 llamadas semanales (§11). |
+| Tarea de predicción | Estimar la probabilidad de que un cliente activo cancele el servicio en los próximos 30 días. | §2.1 y §3: `churn` es una etiqueta binaria que se conoce al cerrar la ventana de 30 días. La predicción debe anticiparse a la cancelación para permitir intervenir. | Entrenar para otro horizonte temporal produciría probabilidades que no corresponden al resultado observado a los 30 días y dificultaría evaluar la campaña. | Se conserva el horizonte de 30 días porque la definición de `churn` es común a las variantes. Los supuestos económicos de V2 afectan la decisión posterior. |
+| Decisiones | Contactar en orden descendente de riesgo a los clientes cuya probabilidad sea mayor o igual al umbral, sin superar la capacidad semanal del call center. | §3 y §5: la selección combina umbral y capacidad. §9.2: el sponsor aprueba el umbral de decisión; el comité define la brecha de equidad aceptable. | Sin límite, la lista del Reto 04 podría superar las llamadas disponibles. Cambiar el umbral sin aprobación modificaría la política de contacto sin la decisión del responsable de negocio. | Máximo de 900 llamadas semanales. El umbral provisional de 0.35 selecciona 457 clientes del conjunto de prueba; su aprobación definitiva corresponde al Reto 06. |
+| Haciendo predicciones | Procesar el lote del lunes a las 06:00, entregar la lista a las 07:00 y permitir consultas mediante `/predict`, con latencia p95 menor de 300 ms. | §5: la lista debe estar disponible antes de iniciar la campaña y el servicio en línea debe atender las consultas de los agentes. | Una lista tardía retrasaría la campaña; una consulta lenta dificultaría usar la predicción durante la llamada, aunque el modelo tuviera buenas métricas. | Se mantienen los horarios comunes del contrato y se limita la lista de V2 a 900 contactos semanales. |
+| Recolección de datos | Registrar los resultados de contacto en CRM y observar la etiqueta de deserción a los 30 días. | §3 y §5: el resultado todavía no existe el día del contacto. Además, la intervención puede cambiar si el cliente permanece o cancela. | Evaluar el desempeño el mismo lunes exigiría etiquetas aún desconocidas. Reentrenar sin identificar a los contactados mezclaría riesgo de abandono y efecto de la campaña. | Registrar los contactos y sus resultados para contrastar posteriormente el éxito supuesto de retención del 25 %. El análisis del sesgo se documentará en el Reto 06. |
+| Fuentes de datos | Usar CRM, facturación y soporte, bajo la responsabilidad de la Jefatura de CRM y Facturación. | §1 y §2: se necesita un dueño que responda por el origen, significado y calidad de los datos. `customer_id` es un seudónimo y `senior_citizen` es un atributo protegido. | Sin origen y responsable definidos, en el Reto 02 sería difícil resolver inconsistencias o acordar tratamientos de calidad y uso de datos. | Actualmente se utiliza la plantilla sintética. En el Reto 02 se trabajará con el extracto asignado a V2 y su semilla 2027, manteniendo las reglas canónicas. |
+| Simulación de impacto | Estimar el beneficio neto de retener desertores contactados y compararlo con contactar al azar al mismo número de clientes. | §7.3 y §11: una buena clasificación debe traducirse en valor económico considerando el valor del cliente, el éxito de retención y el costo del contacto. | Contar solo aciertos ignoraría el costo de llamar. Comparar campañas con diferente número de contactos confundiría el valor del modelo con el tamaño de la campaña. | Se utilizan 450 miles de COP por cliente retenido, 20 miles de COP por contacto y éxito supuesto de 0.25. El beneficio adicional provisional frente al azar es 16385.79 miles de COP. |
+| Construyendo modelos | Reentrenar mensualmente o ante una alerta; registrar la nueva versión como `@challenger`, evaluarla antes de promoverla a `@champion` y conservar `@previous`. | §4 y §5: entrenar una versión nueva no garantiza que sea mejor. El gate verifica su calidad y la versión anterior permite recuperar el servicio ante problemas. | Reemplazar directamente el modelo activo podría introducir una versión peor en el Reto 03 y dejar al equipo sin una referencia clara para el rollback del Reto 05. | Se conserva el control de versiones y promoción. La evaluación del impacto económico de cada versión utilizará los supuestos de V2. |
+| Features | Usar las siete entradas canónicas: `tenure_months`, `contract_type`, `internet_service`, `payment_method`, `monthly_charges`, `support_tickets` y `senior_citizen`. | §2.1 y §2.2: el contrato fija las entradas para mantener coherencia entre entrenamiento y predicción. `customer_id` identifica al cliente; `churn` es el resultado que se quiere anticipar. | Incluir `churn` u otra información del desenlace permitiría al modelo conocer la respuesta durante el entrenamiento. Cambiar las entradas también rompería la compatibilidad con la API. | Se mantiene el mismo conjunto de entradas. En el Reto 02 se excluirán las columnas no canónicas del extracto, como `region` y `oferta_retencion_aceptada`. |
+| Monitoreo | Revisar contrato y cambios en los datos por lote; latencia y errores del servicio; desempeño con etiquetas a los 30 días; resultados de campaña y equidad. | §5 y §8: los problemas de datos y servicio pueden observarse inmediatamente; el desempeño predictivo requiere etiquetas. §7.3 exige distinguir métricas técnicas, económicas y de equidad. | Esperar las etiquetas para revisar todo dejaría un mes sin detectar fallas de datos o servicio. Revisar solo ROC-AUC dejaría sin seguimiento los costos y las diferencias entre grupos. | La capacidad de referencia es 900 y el límite inicial de brecha de recall es 0.10. La brecha provisional observada de 0.1444 supera ese límite y requiere análisis en el Reto 06. |
+
+### Bloque peor justificado: Simulación de impacto
+
+**Debilidad identificada**
+
+La simulación aplica un mismo valor de cliente y una probabilidad de éxito de retención del 25 % a todo el segmento Hogar Pereira y Dosquebradas. Estos son los supuestos oficiales de V2, pero todavía no contamos con resultados de campañas que permitan comprobar ese éxito de retención.
+
+La probabilidad de abandono que calcula el modelo y la probabilidad de que una llamada logre retener a un cliente representan fenómenos diferentes. Por eso, un buen ROC-AUC por sí solo no demuestra que se obtendrá el beneficio económico estimado.
+
+El punto de equilibrio del 17.78 % y los 738 clientes con beneficio esperado positivo dependen de esos supuestos. Además, los resultados actuales proceden de datos sintéticos.
+
+**Alternativa propuesta para revisión del equipo**
+
+Conservar la estimación oficial con los parámetros de V2 y acompañarla con un análisis de sensibilidad: mostrar cómo cambia el beneficio esperado si la intervención logra retener una proporción menor o mayor de clientes.
+
+Los escenarios se identificarán como hipótesis de análisis. La comparación oficial seguirá utilizando los valores de V2.
+
+Posteriormente, se propone contrastar el supuesto con resultados de campañas y una comparación que permita distinguir el efecto de la llamada del comportamiento de clientes que habrían permanecido de todas formas. El diseño de esa validación se acordaría con el sponsor y el dueño del dato.
+
+**Consecuencias para el proyecto**
+
+- Reto 01: registrar en `docs/riesgos.md` el riesgo de sobreestimar el beneficio por utilizar una eficacia de retención todavía no comprobada.
+- Reto 06: documentar en `docs/model_card.md` las limitaciones de la simulación y presentar al sponsor el análisis de sensibilidad como apoyo a la decisión del umbral.
+- Registro de decisiones: documentar en `docs/decision_log.md` la alternativa que finalmente acuerde el equipo.
+- Comunicación de resultados: presentar `net_savings_vs_random` como beneficio estimado bajo supuestos, junto con su fuente y limitaciones.
 
 ## 4. KPIs
+
+Los indicadores permiten evaluar la calidad del modelo, el valor económico estimado, la operación y el cumplimiento de las entregas.
+
+Las líneas base calculadas con datos sintéticos son provisionales y se actualizarán con el extracto CRM en los Retos 02–03. Las metas siguientes son la propuesta inicial del charter para revisión del equipo.
+
 | Tipo | KPI | Línea base | Meta | Cómo se mide |
 |---|---|---|---|---|
-| Técnico | | | | |
-| Negocio (estimado) | | | | |
-| Operación | | | | |
-| Gestión | | | | |
+| Técnico | Capacidad de discriminación: `roc_auc` | 0.8404. Fuente: `metrics.json`, commit `14bf349`, modelo de referencia sobre datos sintéticos con configuración V2. | ≥ 0.75, mínimo configurado actualmente en `params.yaml`: `gate.min_roc_auc`. | Consultar `roc_auc` en `metrics.json` después de cada evaluación del pipeline. Comparar versiones sobre el mismo conjunto de prueba. |
+| Técnico: equidad | Brecha de recall entre grupos de `senior_citizen` | 0.1444, equivalente a 14.44 puntos porcentuales, con umbral de decisión 0.35. Fuente: `metrics.json`, commit `14bf349`. | ≤ 0.10, límite inicial de V2 según el contrato §11, sujeto a ratificación del comité en el Reto 06. | Consultar `recall_gap_senior_citizen` después de cada evaluación y analizar la brecha al estudiar los umbrales de decisión en el Reto 06. |
+| Negocio estimado | Beneficio neto adicional frente a contactar al azar: `net_savings_vs_random` | 16385.79 miles de COP por lote de referencia. Fuente: `metrics.json`, commit `14bf349`, con los supuestos de V2 y umbral 0.35. | > 0 miles de COP por lote, respetando la capacidad y la política de equidad aplicable. | Comparar `net_savings_model` y `net_savings_random` para el mismo número de contactos. Consultar su diferencia en `metrics.json` y actualizar el análisis en `reports/business/` en el Reto 06. |
+| Operación | Latencia p95 del servicio `/predict` | Referencia de diseño: 300 ms, según el Reto 00 §2.2. La línea base medida en el entorno del equipo está pendiente del Reto 05. | p95 < 300 ms. | Realizar pruebas de carga en el Reto 05 y monitorear el servicio. Registrar p95, número de solicitudes y condiciones de la prueba para comparar resultados. |
+| Gestión | Número de hitos de entrega publicados dentro del plazo | 0 de 9 hitos publicados. Fuente: consulta `git ls-remote --tags --refs origin` sin resultados, realizada el 2026-10-21. | 9 de 9 entregas dentro de sus plazos: `r00` a `r07` y `final`. | Verificar los tags en el repositorio remoto, registrar la fecha y evidencia de publicación en la bitácora de cada entrega y contrastarlas con el calendario del contrato §6.2. |
+
+### Interpretación y seguimiento
+
+- La línea base técnica de 0.8404 describe el resultado actual. La meta de 0.75 representa el mínimo de calidad configurado; mantener o mejorar la referencia actual será deseable.
+- La brecha de equidad actual de 0.1444 supera la meta inicial de 0.10. Se mantiene como un hallazgo pendiente de análisis y decisión en el Reto 06.
+- El beneficio económico es una estimación con datos sintéticos y supuestos de retención. Los resultados de campañas permitirán contrastar esos supuestos posteriormente.
+- Los 300 ms son una referencia de diseño, no una medición realizada por el equipo. La primera medición de latencia se registrará en el Reto 05.
+- El valor inicial de gestión corresponde a entregas etiquetadas. El avance mediante commits y documentos continúa antes de publicar cada tag.
+- Las fechas concretas de entrega se tomarán del calendario oficial del curso, aplicando los plazos del contrato §6.2.
 
 ## 5. Alcance y nivel de madurez MLOps objetivo
+
+Esta sección propone el alcance y la forma de operación que el equipo desarrollará durante el proyecto. El nivel descrito es un objetivo de trabajo, cuyo cumplimiento deberá demostrarse con evidencias.
+
+### 5.1 Alcance
+
+**Incluido**
+
+- Retos 00–01: formulación del problema, KPIs, organización del equipo y planificación.
+- Reto 02: gobierno de datos, validaciones y tratamiento del extracto CRM.
+- Reto 03: pipeline reproducible, versionado de datos y modelos, registro de experimentos y promoción controlada.
+- Reto 04: pruebas automatizadas, integración continua y generación de la lista semanal.
+- Reto 05: servicio de predicción, monitoreo, alertas y procedimientos de operación en el runbook.
+- Reto 06: análisis económico y de equidad, discusión del umbral y documentación del modelo.
+- Reto 07: asistente de explicación para el agente, con evaluación y controles sobre la información utilizada.
+- Proyecto Final: integración del sistema, demostración de operación y respuesta a incidentes con evidencias.
+
+La lista de V2 respetará el máximo de 900 llamadas semanales y el umbral aprobado por el sponsor.
+
+**Extensiones opcionales fuera del compromiso base**
+
+Entrenamiento continuo disparado automáticamente, despliegues shadow y canary, y entrega continua automática. Su incorporación requeriría una decisión explícita de alcance y capacidad del equipo.
+
+### 5.2 Nivel de madurez objetivo
+
+**Escala de Google: nivel 0 con prácticas avanzadas**
+
+Se adopta la denominación “nivel 0 avanzado” utilizada en el ejemplo del curso. Se desarrollarán pipelines reproducibles, pruebas, registro de experimentos, monitoreo y controles de promoción.
+
+Una persona iniciará el reentrenamiento previsto en el calendario. El pipeline ejecutará las etapas correspondientes y registrará sus resultados. La promoción del modelo también tendrá intervención humana.
+
+**Escala de Microsoft: aproximación a capacidades del nivel 2**
+
+Se toma como referencia el entrenamiento repetible y trazable, el versionado de modelos y la publicación manual controlada.
+
+La equivalencia es orientativa. El alcance propuesto cubre esas capacidades, mientras que la recepción inicial del extracto y el inicio del reentrenamiento seguirán siendo manuales. Las capacidades alcanzadas y pendientes se revisarán al cierre del proyecto.
+
+### 5.3 Justificación con los cinco factores
+
+| Factor | Situación de V2 | Consecuencia para el diseño |
+|---|---|---|
+| Número de modelos | Un modelo principal de churn activo, con versiones candidatas y anteriores. El Reto 07 incorpora un asistente de explicación como componente adicional. | Priorizar un registro claro y una promoción controlada, con una infraestructura que el equipo pueda operar. |
+| Velocidad de cambio del entorno | Todavía no se ha medido la velocidad real de cambio del segmento. El contrato §5 establece reentrenamiento mensual y las etiquetas llegan a los 30 días. | Monitorear los cambios y revisar la disponibilidad de etiquetas antes de iniciar un reentrenamiento. Mantener su inicio bajo responsabilidad humana. |
+| Criticidad de la decisión | La priorización afecta el gasto de campaña y qué clientes reciben una oportunidad de retención. La capacidad máxima es de 900 llamadas semanales. | Conservar responsables para el umbral, la promoción y la respuesta a incidentes. Analizar rentabilidad y equidad antes de modificar la política de contacto. |
+| Regulación y uso responsable | La Ley 1581 enmarca la protección de datos personales y el CONPES 4144 orienta la política nacional de IA. El contrato protege el identificador y exige evaluar la equidad respecto de `senior_citizen`. | Aplicar los controles de datos, privacidad, trazabilidad y equidad definidos por el contrato. Registrar decisiones y responsables. |
+| Frecuencia de predicción | Lote semanal: lunes a las 06:00 y lista a las 07:00. También existen consultas continuas mediante `/predict` (contrato §5). | Automatizar las tareas repetibles de predicción, validación y monitoreo, manteniendo control humano sobre los cambios del modelo y de la política. |
+
+### 5.4 Tareas manuales y responsables propuestos
+
+Esta distribución se formalizará en la RACI del Reto 01, respetando las autoridades del contrato §9.2.
+
+| Tarea manual | Responsable propuesto | Justificación |
+|---|---|---|
+| Revisar la calidad del extracto y proponer tratamientos | Gloria, Data Steward, con apoyo de Jorge Andrés, Data Scientist. Los cambios del contrato de datos los decide su dueño. | Las inconsistencias requieren interpretar el significado del dato y acordar su tratamiento antes de automatizarlo. |
+| Iniciar el reentrenamiento mensual o derivado del análisis de una alerta | Jorge Eliecer, MLOps Engineer, con la revisión de datos y etiquetas por Jorge Andrés. | Se debe comprobar que existen datos adecuados y etiquetas disponibles. Una alerta por sí sola no garantiza que reentrenar resuelva el problema. |
+| Autorizar y ejecutar una promoción | Juan Manuel, Líder/PO, coordina la revisión; Jorge Eliecer ejecuta el procedimiento. | La versión debe contar con evidencia y superar el gate. Ninguna promoción puede omitir `reports/gate.json` con `"passed": true` (contrato §4). |
+| Aprobar el umbral de decisión | Sponsor, representado por el docente, con evidencia preparada por Jorge Andrés. | El umbral expresa una decisión de negocio sobre rentabilidad, capacidad y equidad (contrato §9.2). |
+| Ratificar la brecha de equidad aceptable | Comité presidido por el docente. | La aceptación de diferencias entre grupos requiere la autoridad definida por el contrato §9.2. |
+| Decidir y ejecutar un rollback | Juan Manuel decide; Jorge Eliecer ejecuta y registra la recuperación. | La respuesta debe tener responsable, versión de destino y evidencia del incidente. |
+
+### 5.5 Referencias
+
+- Reto 00, §4: alcance y nivel de madurez.
+- Contrato del sistema, §4, §5, §9.2, §11 y §12.
+- Ejemplo de charter del curso, §5: denominación “nivel 0 avanzado”.
+- [Google: MLOps y automatización de pipelines](https://docs.cloud.google.com/architecture/mlops-continuous-delivery-and-automation-pipelines-in-machine-learning).
+- [Microsoft: modelo de madurez MLOps](https://learn.microsoft.com/en-us/azure/architecture/ai-ml/guide/mlops-maturity-model).
+- [Ley 1581 de 2012](https://www.funcionpublica.gov.co/eva/gestornormativo/norma.php?i=49981).
+- [CONPES 4144](https://colaboracion.dnp.gov.co/CDT/Conpes/Econ%C3%B3micos/4144.pdf).
 
 ## 6. Roles, habilidades y RACI
 (Las filas de umbral de decisión, umbrales del gate, brecha de equidad, rollback, cambio del contrato
