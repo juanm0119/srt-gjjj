@@ -268,6 +268,13 @@ Esta distribución se formalizará en la RACI del Reto 01, respetando las autori
 (Las filas de umbral de decisión, umbrales del gate, brecha de equidad, rollback, cambio del contrato
 de datos y envío de datos a un LLM externo tienen el **A** que fija el contrato §9.2.)
 
+| Integrante | Rol principal | Rol secundario |
+|---|---|---|
+| Juan Manuel Adarve Cifuentes | Líder / PO | MLOps Engineer |
+| Jorge Eliecer Leighton Romero | MLOps Engineer | Data Steward |
+| Jorge Andrés Sánchez Martínez | Data Scientist | Líder / PO |
+| Gloria Abimeleth Ardila Guerrero | Data Steward | Data Scientist |
+
 ## 7. Backlog estimado, Definición de Terminado y cronograma
 
 ## 8. Riesgos principales
