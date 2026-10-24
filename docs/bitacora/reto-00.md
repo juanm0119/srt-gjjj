@@ -196,3 +196,112 @@ automatizadas aprobaron. El roc_auc consultado fue 0.8404
 y el pr_auc fue 0.6627.
 
 
+3 — Adaptación de los supuestos a la variante V2
+
+Responsable: Leighton (usuario de GitHub: Leighton8807).
+
+Rama de trabajo: leighton.
+
+Fuente de los valores: Contrato del sistema, §11.
+
+Segmento: Hogar Pereira y Dosquebradas.
+
+Parámetros modificados
+
+Se actualizaron los siguientes valores en params.yaml:
+
+Parámetro
+
+Valor anterior
+
+Valor V2
+
+business.customer_value
+
+600.0
+
+450.0
+
+business.contact_cost
+
+25.0
+
+20.0
+
+business.retention_success_rate
+
+0.30
+
+0.25
+
+business.weekly_capacity
+
+600
+
+900
+
+Parámetro
+
+Valor anterior
+
+Valor V2
+
+business.customer_value
+
+600.0
+
+450.0
+
+business.contact_cost
+
+25.0
+
+20.0
+
+business.retention_success_rate
+
+0.30
+
+0.25
+
+business.weekly_capacity
+
+600
+
+900
+
+Los valores monetarios se expresan en miles de COP. La política fairness.max_recall_gap_senior_citizen se conservó en 0.10, porque ya coincide con V2. No se modificó el umbral de decisión.
+
+Verificación de las etapas afectadas
+
+Después de recuperar del respaldo local dvc.lock y models/model_meta.json, se ejecutó uv run dvc status y se obtuvo:
+
+evaluate:
+        changed deps:
+                params.yaml:
+                        modified:           business
+
+Se ejecutó uv run dvc params diff:
+
+
+
+Path         Param                            HEAD    workspace
+params.yaml  business.contact_cost            25.0    20.0
+params.yaml  business.customer_value           600.0   450.0
+params.yaml  business.retention_success_rate   0.3     0.25
+params.yaml  business.weekly_capacity          600     900
+
+Ejecución y comparación de métricas
+
+Se ejecutó uv run dvc repro. DVC omitió ingest, validate, prepare y train, y ejecutó únicamente evaluate.
+
+Después se ejecutó uv run dvc metrics diff:
+
+Path          Metric                 HEAD      workspace  Change
+metrics.json  net_savings_model       37355.0   21347.5   -16007.5
+metrics.json  net_savings_random      11137.74  4961.71   -6176.03
+metrics.json  net_savings_vs_random   26217.26  16385.79  -9831.47
+
+Las métricas técnicas permanecieron iguales: roc_auc = 0.8404, pr_auc = 0.6627, precision = 0.593 y recall = 0.7057. No se reentrenó el modelo.
+
+El impacto económico estimado cambió al aplicar los supuestos de V2. La ventaja estimada frente a contactar al azar pasó de 26217.26 a 16385.79 miles de COP. 

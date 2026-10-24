@@ -8,7 +8,7 @@
   "precision_at_eval": 0.5573,
   "recall_gap_senior_citizen": 0.1444,
   "customers_contacted": 457,
-  "net_savings_model": 37355.0,
-  "net_savings_random": 11137.74,
-  "net_savings_vs_random": 26217.26
+  "net_savings_model": 21347.5,
+  "net_savings_random": 4961.71,
+  "net_savings_vs_random": 16385.79
 }
