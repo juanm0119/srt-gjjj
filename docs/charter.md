@@ -293,6 +293,18 @@ Data Scientist y Data Steward se presentan en columnas separadas porque el equip
 | Envío de datos a un proveedor de LLM externo | A | C | C | C | R | C | C |
 | Model card y comunicación de resultados | C | A | R | R | C | C | C |
 
+**[1] Aprobación obligatoria del Comité para los umbrales del gate.** La A permanece en el Líder / PO. La C del Comité en esa fila incluye la aprobación previa exigida por el contrato; no se interpreta como una consulta opcional.
+
+**Ejecución de experimentos.** Data Scientist conserva la A sobre el diseño del experimento y la selección técnica del modelo. MLOps asume la R de ejecutar las corridas reproducibles definidas, registrar las métricas y aportar la evidencia para su evaluación por Data Scientist.
+
+**Identificación de los roles externos:**
+
+- **Sponsor:** Gerencia Comercial de Conecta Andina, representada por el docente.
+- **Dueño del dato:** Jefatura de CRM y Facturación; rol simulado por el docente o por el Líder del equipo en el Reto 02, según el contrato.
+- **Comité:** docente que preside y resuelve, equipo revisor e invitados cuando corresponda según el contrato.
+
+Si una persona representa más de un rol, se registra con qué autoridad actúa en cada decisión. Ejercer Data Steward no equivale a ser Dueño del dato.
+
 ## 7. Backlog estimado, Definición de Terminado y cronograma
 
 ## 8. Riesgos principales
