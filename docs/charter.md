@@ -306,6 +306,31 @@ Data Scientist y Data Steward se presentan en columnas separadas porque el equip
 Si una persona representa más de un rol, se registra con qué autoridad actúa en cada decisión. Ejercer Data Steward no equivale a ser Dueño del dato.
 
 ## 7. Backlog estimado, Definición de Terminado y cronograma
+### 7.1. Backlog de referencia
+
+El backlog contiene las 17 historias de usuario del SRT. Las estimaciones se expresarán en horas-persona, es decir, esfuerzo total de trabajo del equipo.
+
+Las historias identificadas como operación requieren, además, estimación mediante PERT.
+
+| Id | Historia (resumen) | Reto | Prioridad | Operación | Estimación (h-persona) |
+|---|---|---|---|---|---|
+| HU-01 | Definir la decisión que cambia el SRT y cómo se medirá su valor. | 00 | Alta | No | Pendiente |
+| HU-02 | Definir quién aprueba umbrales, equidad y rollback. | 01 | Alta | No | Pendiente |
+| HU-03 | Detener el pipeline cuando lleguen datos inválidos. | 02, 03 | Alta | No | Pendiente |
+| HU-04 | Excluir la fuga de información antes de entrenar. | 02 | Alta | No | Pendiente |
+| HU-05 | Reconstruir el modelo de cualquier tag en otro computador. | 03 | Alta | No | Pendiente |
+| HU-06 | Comparar al menos tres corridas con sus parámetros para justificar el modelo. | 03 | Media | No | Pendiente |
+| HU-07 | Exigir pruebas y quality gate antes de integrar cambios a main. | 04 | Alta | Sí | Pendiente |
+| HU-08 | Generar la lista priorizada de clientes cada lunes a las 07:00. | 04 | Alta | Sí | Pendiente |
+| HU-09 | Consultar en línea el riesgo de un cliente en menos de un segundo. | 05 | Media | Sí | Pendiente |
+| HU-10 | Generar un reporte de drift para cada lote. | 05 | Alta | Sí | Pendiente |
+| HU-11 | Volver a la versión anterior en menos de 30 minutos. | 03, 05 | Alta | Sí | Pendiente |
+| HU-12 | Estimar el ahorro frente a llamar al azar y analizar su sensibilidad. | 06 | Alta | No | Pendiente |
+| HU-13 | Evaluar la brecha de recall entre grupos antes de cada promoción. | 06 | Alta | No | Pendiente |
+| HU-14 | Elaborar una model card con evidencia y usos no previstos. | 06 | Media | No | Pendiente |
+| HU-15 | Explicar brevemente al agente por qué un cliente está en riesgo. | 07 | Media | No | Pendiente |
+| HU-16 | Evaluar los cambios de prompt antes de publicarlos. | 07 | Media | Sí | Pendiente |
+| HU-17 | Comunicar los incidentes y elaborar un post-mortem sin culpables. | 05, S8 | Alta | Sí | Pendiente |
 
 ## 8. Riesgos principales
 Los cinco riesgos de mayor exposición. El registro completo y vivo está en [`riesgos.md`](riesgos.md).
