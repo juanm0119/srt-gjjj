@@ -268,6 +268,43 @@ Esta distribución se formalizará en la RACI del Reto 01, respetando las autori
 (Las filas de umbral de decisión, umbrales del gate, brecha de equidad, rollback, cambio del contrato
 de datos y envío de datos a un LLM externo tienen el **A** que fija el contrato §9.2.)
 
+| Integrante | Rol principal | Rol secundario |
+|---|---|---|
+| Juan Manuel Adarve Cifuentes | Líder / PO | MLOps Engineer |
+| Jorge Eliecer Leighton Romero | MLOps Engineer | Data Steward |
+| Jorge Andrés Sánchez Martínez | Data Scientist | Líder / PO |
+| Gloria Abimeleth Ardila Guerrero | Data Steward | Data Scientist |
+
+Data Scientist y Data Steward se presentan en columnas separadas porque el equipo tiene cuatro integrantes con responsabilidades diferenciadas.
+
+| Actividad | Sponsor | Líder / PO | Data Scientist | Data Steward | MLOps Engineer | Dueño del dato | Comité |
+|---|---|---|---|---|---|---|---|
+| Project Charter y ML Canvas | C | A | C | R | C | C | I |
+| Backlog y priorización | C | A | R | R | R | I | I |
+| Contrato de datos y sus cambios | I | C | C | R | C | A | I |
+| Pipeline de datos y versionado | I | A | C | R | R | C | I |
+| Experimentos y selección de modelo | I | C | A | C | R | C | I |
+| Umbrales del quality gate (`gate.*`) [1] | C | A | R | C | R | C | C |
+| Umbral de decisión del negocio (`model.decision_threshold`) | A | C | R | C | C | C | C |
+| Brecha de equidad aceptable | C | C | R | R | C | C | A |
+| Promoción a `@champion` | I | A | C | C | R | I | I |
+| Despliegue y monitoreo | I | A | C | C | R | C | I |
+| Rollback ante incidente | I | A | C | C | R | I | I |
+| Envío de datos a un proveedor de LLM externo | A | C | C | C | R | C | C |
+| Model card y comunicación de resultados | C | A | R | R | C | C | C |
+
+**[1] Aprobación obligatoria del Comité para los umbrales del gate.** La A permanece en el Líder / PO. La C del Comité en esa fila incluye la aprobación previa exigida por el contrato; no se interpreta como una consulta opcional.
+
+**Ejecución de experimentos.** Data Scientist conserva la A sobre el diseño del experimento y la selección técnica del modelo. MLOps asume la R de ejecutar las corridas reproducibles definidas, registrar las métricas y aportar la evidencia para su evaluación por Data Scientist.
+
+**Identificación de los roles externos:**
+
+- **Sponsor:** Gerencia Comercial de Conecta Andina, representada por el docente.
+- **Dueño del dato:** Jefatura de CRM y Facturación; rol simulado por el docente o por el Líder del equipo en el Reto 02, según el contrato.
+- **Comité:** docente que preside y resuelve, equipo revisor e invitados cuando corresponda según el contrato.
+
+Si una persona representa más de un rol, se registra con qué autoridad actúa en cada decisión. Ejercer Data Steward no equivale a ser Dueño del dato.
+
 ## 7. Backlog estimado, Definición de Terminado y cronograma
 
 ## 8. Riesgos principales
