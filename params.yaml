@@ -1,4 +1,4 @@
-# Parámetros del pipeline. Todo cambio aquí es una decisión versionada:
+﻿# Parámetros del pipeline. Todo cambio aquí es una decisión versionada:
 # DVC detecta qué etapas deben re-ejecutarse y MLflow registra los valores en cada corrida.
 
 data:
