@@ -275,6 +275,24 @@ de datos y envío de datos a un LLM externo tienen el **A** que fija el contrato
 | Jorge Andrés Sánchez Martínez | Data Scientist | Líder / PO |
 | Gloria Abimeleth Ardila Guerrero | Data Steward | Data Scientist |
 
+Data Scientist y Data Steward se presentan en columnas separadas porque el equipo tiene cuatro integrantes con responsabilidades diferenciadas.
+
+| Actividad | Sponsor | Líder / PO | Data Scientist | Data Steward | MLOps Engineer | Dueño del dato | Comité |
+|---|---|---|---|---|---|---|---|
+| Project Charter y ML Canvas | C | A | C | R | C | C | I |
+| Backlog y priorización | C | A | R | R | R | I | I |
+| Contrato de datos y sus cambios | I | C | C | R | C | A | I |
+| Pipeline de datos y versionado | I | A | C | R | R | C | I |
+| Experimentos y selección de modelo | I | C | A | C | R | C | I |
+| Umbrales del quality gate (`gate.*`) [1] | C | A | R | C | R | C | C |
+| Umbral de decisión del negocio (`model.decision_threshold`) | A | C | R | C | C | C | C |
+| Brecha de equidad aceptable | C | C | R | R | C | C | A |
+| Promoción a `@champion` | I | A | C | C | R | I | I |
+| Despliegue y monitoreo | I | A | C | C | R | C | I |
+| Rollback ante incidente | I | A | C | C | R | I | I |
+| Envío de datos a un proveedor de LLM externo | A | C | C | C | R | C | C |
+| Model card y comunicación de resultados | C | A | R | R | C | C | C |
+
 ## 7. Backlog estimado, Definición de Terminado y cronograma
 
 ## 8. Riesgos principales
